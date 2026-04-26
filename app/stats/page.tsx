@@ -15,7 +15,7 @@ const avgGoals = allPredictions.reduce((sum, { prediction }) => sum + prediction
 const avgCorners = totalCorners / allPredictions.length;
 const avgCards = totalCards / allPredictions.length;
 
-// Top scorers — teams expected to score most
+// Top scorers â teams expected to score most
 const teamExpectedGoals = Object.values(TEAMS).map(team => {
   const homeFixtures = MATCHDAY_1_FIXTURES.filter(f => f.homeTeam === team.name);
   const awayFixtures = MATCHDAY_1_FIXTURES.filter(f => f.awayTeam === team.name);
@@ -53,17 +53,17 @@ export default function StatsPage() {
     <div className="space-y-10">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-white text-3xl font-black">📊 Prediction Statistics</h1>
+        <h1 className="text-white text-3xl font-black">ð Prediction Statistics</h1>
         <p className="text-gray-400">AI-generated insights across all 24 Matchday 1 fixtures.</p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Avg Goals/Game', value: avgGoals.toFixed(1), icon: '⚽', color: 'text-green-400' },
-          { label: 'Avg Corners/Game', value: avgCorners.toFixed(1), icon: '🔄', color: 'text-blue-400' },
-          { label: 'Avg Cards/Game', value: avgCards.toFixed(1), icon: '🟨', color: 'text-yellow-400' },
-          { label: 'Fixtures Predicted', value: String(allPredictions.length), icon: '🤖', color: 'text-purple-400' },
+          { label: 'Avg Goals/Game', value: avgGoals.toFixed(1), icon: 'â½', color: 'text-green-400' },
+          { label: 'Avg Corners/Game', value: avgCorners.toFixed(1), icon: 'ð', color: 'text-blue-400' },
+          { label: 'Avg Cards/Game', value: avgCards.toFixed(1), icon: 'ð¨', color: 'text-yellow-400' },
+          { label: 'Fixtures Predicted', value: String(allPredictions.length), icon: 'ð¤', color: 'text-purple-400' },
         ].map(stat => (
           <div key={stat.label} className="bg-fifa-card border border-fifa-border rounded-xl p-4 text-center">
             <div className="text-3xl mb-1">{stat.icon}</div>
@@ -78,7 +78,7 @@ export default function StatsPage() {
 
         {/* Top Expected Scorers */}
         <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">🎯 Top Teams by Expected Goals</h2>
+          <h2 className="text-white text-xl font-black">ð¯ Top Teams by Expected Goals</h2>
           <p className="text-gray-500 text-sm">Expected goals across Matchday 1 based on the Poisson model.</p>
           <div className="space-y-2">
             {teamExpectedGoals.map(({ team, expectedGoals }, i) => (
@@ -102,7 +102,7 @@ export default function StatsPage() {
 
         {/* Most Exciting Matches */}
         <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">🔥 Most Goals Expected</h2>
+          <h2 className="text-white text-xl font-black">ð¥ Most Goals Expected</h2>
           <p className="text-gray-500 text-sm">Matches predicted to have the highest combined goal tally.</p>
           <div className="space-y-2">
             {excitingMatches.map(({ fixture, prediction }) => (
@@ -113,7 +113,7 @@ export default function StatsPage() {
                     <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
                   </div>
                   <div className="text-center px-3">
-                    <div className="text-blue-400 font-black text-sm">{prediction.predictedScore.home}–{prediction.predictedScore.away}</div>
+                    <div className="text-blue-400 font-black text-sm">{prediction.predictedScore.home}â{prediction.predictedScore.away}</div>
                     <div className="text-green-400 text-xs">{(prediction.expectedHomeGoals + prediction.expectedAwayGoals).toFixed(1)} xG</div>
                   </div>
                   <div className="flex items-center gap-2 flex-1 justify-end">
@@ -128,8 +128,8 @@ export default function StatsPage() {
 
         {/* Biggest Mismatches */}
         <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">💪 Biggest Mismatches</h2>
-          <p className="text-gray-500 text-sm">Highest confidence predictions — largest FIFA ranking gaps.</p>
+          <h2 className="text-white text-xl font-black">ðª Biggest Mismatches</h2>
+          <p className="text-gray-500 text-sm">Highest confidence predictions â largest FIFA ranking gaps.</p>
           <div className="space-y-2">
             {biggestMismatches.map(({ fixture, prediction }) => {
               const homeWin = Math.round(prediction.homeWinProbability * 100);
@@ -144,7 +144,7 @@ export default function StatsPage() {
                       <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
                     </div>
                     <div className="text-blue-400 font-black text-sm px-3">
-                      {prediction.predictedScore.home}–{prediction.predictedScore.away}
+                      {prediction.predictedScore.home}â{prediction.predictedScore.away}
                     </div>
                     <div className="flex items-center gap-2 flex-1 justify-end">
                       <span className="text-gray-300 text-sm truncate">{fixture.awayTeam}</span>
@@ -162,7 +162,7 @@ export default function StatsPage() {
 
         {/* Closest Contests */}
         <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">⚖️ Tightest Contests</h2>
+          <h2 className="text-white text-xl font-black">âï¸ Tightest Contests</h2>
           <p className="text-gray-500 text-sm">Matches where the AI model rates both teams almost equal.</p>
           <div className="space-y-2">
             {closestContests.map(({ fixture, prediction }) => {
@@ -177,7 +177,7 @@ export default function StatsPage() {
                       <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
                     </div>
                     <div className="text-blue-400 font-black text-sm px-3">
-                      {prediction.predictedScore.home}–{prediction.predictedScore.away}
+                      {prediction.predictedScore.home}â{prediction.predictedScore.away}
                     </div>
                     <div className="flex items-center gap-2 flex-1 justify-end">
                       <span className="text-gray-300 text-sm truncate">{fixture.awayTeam}</span>
@@ -201,16 +201,16 @@ export default function StatsPage() {
 
       {/* Methodology */}
       <section className="bg-fifa-card border border-fifa-border rounded-2xl p-6 space-y-4">
-        <h2 className="text-white text-xl font-black">🧪 Model Methodology</h2>
+        <h2 className="text-white text-xl font-black">ð§ª Model Methodology</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-400 leading-relaxed">
           <div>
             <h3 className="text-white font-bold mb-2">Poisson Distribution Model</h3>
-            <p>Expected goals for each team are calculated using: λ = (attack / opponent’s defence) × historical WC average (1.30 goals/team).</p>
-            <p className="mt-2">This gives us a probability matrix of all possible scores from 0–6 goals each. The most likely score is selected as the prediction.</p>
+            <p>Expected goals for each team are calculated using: Î» = (attack / opponentâs defence) Ã historical WC average (1.30 goals/team).</p>
+            <p className="mt-2">This gives us a probability matrix of all possible scores from 0â6 goals each. The most likely score is selected as the prediction.</p>
           </div>
           <div>
             <h3 className="text-white font-bold mb-2">Team Ratings</h3>
-            <p>Attack and defence ratings (0.5–2.5 scale) are derived from FIFA world rankings. The current world #1 (Argentina) has a 2.3 attack rating; the lowest-ranked teams have 0.5–0.8.</p>
+            <p>Attack and defence ratings (0.5â2.5 scale) are derived from FIFA world rankings. The current world #1 (Argentina) has a 2.3 attack rating; the lowest-ranked teams have 0.5â0.8.</p>
             <p className="mt-2">Corner and card predictions use WC historical averages adjusted by team style factors from the ratings database.</p>
           </div>
         </div>
