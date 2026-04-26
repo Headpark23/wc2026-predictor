@@ -1,4 +1,5 @@
-import Image from 'next/image';
+'use client';
+
 import { TEAMS } from '@/lib/constants';
 import { getFlagEmoji } from '@/lib/utils';
 
