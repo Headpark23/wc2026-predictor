@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const NAV_LINKS = [
-  { href: '/', label: '🏠 Home' },
-  { href: '/fixtures', label: '📅 Fixtures' },
-  { href: '/groups', label: '📋 Groups' },
-  { href: '/stats', label: '📊 Stats' },
+  { href: '/', label: 'ð  Home' },
+  { href: '/fixtures', label: 'ð Fixtures' },
+  { href: '/groups', label: 'ð Groups' },
+  { href: '/stats', label: 'ð Stats' },
 ];
 
 export default function Navigation() {
@@ -18,7 +18,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">⚽</span>
+            <span className="text-2xl">â½</span>
             <div>
               <div className="text-white font-black text-sm leading-tight">WC 2026</div>
               <div className="text-blue-400 text-xs leading-tight">AI Predictor</div>
