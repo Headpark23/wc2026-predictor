@@ -1,17 +1,15 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import Navigation from '@/components/Navigation';
 
-const inter = Inter({ subsets: ['latin'] });
-
 export const metadata: Metadata = {
   title: 'World Cup 2026 AI Predictor',
-  description: 'AI-powered match predictions for FIFA World Cup 2026. Scores, corners, cards — powered by Poisson statistics.',
-  keywords: 'World Cup 2026, FIFA, predictions, football, AI, Poisson',
+  description:
+    'AI-powered predictions for every FIFA World Cup 2026 match. Score predictions, corners, cards and more — powered by statistical modelling.',
+  keywords: 'World Cup 2026, FIFA, predictions, AI, football, soccer, WC2026',
   openGraph: {
     title: 'World Cup 2026 AI Predictor',
-    description: 'Poisson-based AI predictions for every WC 2026 match',
+    description: 'AI-powered predictions for every WC 2026 match',
     type: 'website',
   },
 };
@@ -19,14 +17,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="min-h-screen bg-fifa-dark">
         <Navigation />
-        <main className="min-h-screen bg-fifa-dark">
+        <main className="max-w-7xl mx-auto px-4 py-6">
           {children}
         </main>
-        <footer className="bg-fifa-card border-t border-fifa-border py-6 text-center text-gray-500 text-sm">
-          <p>World Cup 2026 AI Predictor &bull; Powered by Poisson Distribution &amp; API-Football</p>
-          <p className="mt-1">Predictions are statistical estimates only. Not betting advice.</p>
+        <footer className="border-t border-fifa-border mt-16 py-8 text-center text-gray-600 text-sm">
+          <p>
+            ⚽ World Cup 2026 AI Predictor · Predictions powered by statistical modelling ·
+            <span className="text-gray-700"> Not affiliated with FIFA</span>
+          </p>
+          <p className="mt-1 text-xs text-gray-700">
+            Predictions are statistical estimates only. For entertainment purposes.
+          </p>
+          <p className="mt-2 text-xs text-gray-600">
+            © {new Date().getFullYear()} Martin White
+          </p>
         </footer>
       </body>
     </html>
