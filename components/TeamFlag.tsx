@@ -39,7 +39,7 @@ export default function TeamFlag({
     );
   }
 
-  const src = `https://flagcdn.com/${Math.round(size * 1.5)}x${size}/${code}.png`;
+  const src = `https://flagcdn.com/w80/${code}.png`;
 
   if (namePosition === 'below') {
     return (
