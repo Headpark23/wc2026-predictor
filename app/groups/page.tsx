@@ -39,12 +39,12 @@ export default function GroupsPage() {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-white text-3xl font-black">📋 Group Tables</h1>
+        <h1 className="text-white text-3xl font-black">ð Group Tables</h1>
         <p className="text-gray-400">
           Predicted standings based on Matchday 1 AI predictions. Tables update live once the tournament begins.
         </p>
         <div className="bg-yellow-900/20 border border-yellow-800/40 rounded-lg px-4 py-2 text-yellow-300 text-sm">
-          ⚠️ Showing <strong>predicted</strong> standings — real standings will replace these from 11 June 2026
+          â ï¸ Showing <strong>predicted</strong> standings â real standings will replace these from 11 June 2026
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export default function GroupsPage() {
                         <span className="text-gray-300 text-xs truncate">{f.homeTeam}</span>
                       </div>
                       <div className="text-blue-400 font-black text-sm px-2">
-                        {pred.predictedScore.home}–{pred.predictedScore.away}
+                        {pred.predictedScore.home}â{pred.predictedScore.away}
                       </div>
                       <div className="flex items-center gap-2 flex-1 justify-end">
                         <span className="text-gray-300 text-xs truncate">{f.awayTeam}</span>
