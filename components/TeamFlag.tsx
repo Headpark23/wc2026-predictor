@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { TEAMS } from '@/lib/constants';
 import { getFlagEmoji } from '@/lib/utils';
 
@@ -10,32 +11,57 @@ interface TeamFlagProps {
 }
 
 export default function TeamFlag({
-  teamName, size = 32, showName = false, namePosition = 'right', className = '',
+  teamName,
+  size = 32,
+  showName = false,
+  namePosition = 'right',
+  className = '',
 }: TeamFlagProps) {
   const team = TEAMS[teamName];
   const code = team?.code || 'un';
   const isSubdivision = code.includes('-');
-  const src = `https://flagcdn.com/w${size * 2}/${code}.png`;
 
+  // Use emoji for UK home nations (subdivision codes)
   if (isSubdivision) {
     const emoji = getFlagEmoji(code);
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <span style={{ fontSize: size * 0.7 }}>{emoji}</span>
-        {showName && <span className="text-white font-medium">{teamName}</span>}
+        {showName && namePosition === 'right' && (
+          <span className="text-white font-medium">{teamName}</span>
+        )}
+        {showName && namePosition === 'below' && (
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-white text-xs font-medium text-center leading-tight">{teamName}</span>
+          </div>
+        )}
       </div>
     );
   }
 
+  const src = `https://flagcdn.com/${Math.round(size * 1.5)}x${size}/${code}.png`;
+
   if (namePosition === 'below') {
     return (
       <div className={`flex flex-col items-center gap-1.5 ${className}`}>
-        <div className="rounded overflow-hidden border border-white/10"
-          style={{ width: size * 1.5, height: size }}>
-          <img src={src} alt={teamName} className="w-full h-full object-cover" />
+        <div
+          className="rounded overflow-hidden shadow-md border border-white/10"
+          style={{ width: size * 1.5, height: size }}
+        >
+          <img
+            src={src}
+            alt={`${teamName} flag`}
+            width={size * 1.5}
+            height={size}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src =
+                `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><rect fill="%23374151" width="24" height="24" rx="2"/></svg>`;
+            }}
+          />
         </div>
         {showName && (
-          <span className="text-white text-xs font-semibold text-center max-w-[80px] leading-tight">
+          <span className="text-white text-xs font-semibold text-center leading-tight max-w-[80px]">
             {teamName}
           </span>
         )}
@@ -45,11 +71,25 @@ export default function TeamFlag({
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div className="rounded overflow-hidden border border-white/10 flex-shrink-0"
-        style={{ width: size * 1.5, height: size }}>
-        <img src={src} alt={teamName} className="w-full h-full object-cover" />
+      <div
+        className="rounded overflow-hidden shadow-md border border-white/10 flex-shrink-0"
+        style={{ width: size * 1.5, height: size }}
+      >
+        <img
+          src={src}
+          alt={`${teamName} flag`}
+          width={size * 1.5}
+          height={size}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src =
+              `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24"><rect fill="%23374151" width="24" height="24" rx="2"/></svg>`;
+          }}
+        />
       </div>
-      {showName && <span className="text-white font-medium">{teamName}</span>}
+      {showName && (
+        <span className="text-white font-medium">{teamName}</span>
+      )}
     </div>
   );
 }
