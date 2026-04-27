@@ -24,7 +24,7 @@ export default function HomePage() {
         <div className="relative px-8 py-14 text-center space-y-6">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm text-blue-200 font-medium">
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            AI Predictions Now Live Â· Matchday 1
+            AI Predictions Now Live · Matchday 1
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-white leading-tight">
             FIFA World Cup
@@ -35,19 +35,19 @@ export default function HomePage() {
           <p className="text-gray-300 text-lg max-w-2xl mx-auto leading-relaxed">
             AI-powered predictions for all <strong className="text-white">104 matches</strong> across{' '}
             <strong className="text-white">12 groups</strong> and <strong className="text-white">48 teams</strong>.
-            Predicted score, corners, cards â and how likely each result is.
+            Predicted score, corners, cards — and how likely each result is.
           </p>
           <div className="flex flex-col items-center gap-3">
             <p className="text-gray-400 text-sm font-medium uppercase tracking-widest">Tournament Begins In</p>
             <CountdownTimer targetDate={TOURNAMENT.startDate} />
-            <p className="text-gray-500 text-xs">Opening Match: Mexico vs South Africa Â· 11 June 2026 Â· Estadio Azteca</p>
+            <p className="text-gray-500 text-xs">Opening Match: Mexico vs South Africa · 11 June 2026 · Estadio Azteca</p>
           </div>
           <div className="flex items-center justify-center gap-4 pt-2">
             <Link href="/fixtures" className="bg-fifa-red hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-lg shadow-red-900/30">
-              ð View All Fixtures
+              📅 View All Fixtures
             </Link>
             <Link href="/groups" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl transition-colors">
-              ð Group Tables
+              📊 Group Tables
             </Link>
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function HomePage() {
             <img src={`https://flagcdn.com/w40/${h.flag}.png`} alt={h.country} className="w-10 h-7 object-cover rounded shadow flex-shrink-0" />
             <div>
               <div className="text-white font-bold text-sm sm:text-base truncate">{h.country}</div>
-              <div className="text-gray-500 text-xs">{h.cities} Â· {h.matches}</div>
+              <div className="text-gray-500 text-xs hidden sm:block">{h.cities} · {h.matches}</div>
             </div>
           </div>
         ))}
@@ -71,8 +71,8 @@ export default function HomePage() {
 
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-white text-2xl font-black">ð¥ Featured Matchday 1 Fixtures</h2>
-          <Link href="/fixtures" className="text-blue-400 hover:text-blue-300 text-sm font-medium">See all â</Link>
+          <h2 className="text-white text-2xl font-black">🔥 Featured Matchday 1 Fixtures</h2>
+          <Link href="/fixtures" className="text-blue-400 hover:text-blue-300 text-sm font-medium">See all →</Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {featuredPredictions.map(({ fixture, prediction }) => (
@@ -82,7 +82,7 @@ export default function HomePage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-white text-2xl font-black">ð All 12 Groups</h2>
+        <h2 className="text-white text-2xl font-black">📋 All 12 Groups</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {Object.entries(GROUPS).map(([letter, teams]) => (
             <Link key={letter} href={`/groups#group-${letter}`} className="bg-fifa-card border border-fifa-border hover:border-blue-700 rounded-xl p-3 transition-all hover:bg-white/5">
@@ -101,12 +101,12 @@ export default function HomePage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-white text-2xl font-black">ð¤ How the AI Works</h2>
+        <h2 className="text-white text-2xl font-black">🤖 How the AI Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { icon: 'ð', title: 'Statistical Model', desc: 'Poisson distribution uses FIFA rankings, attack and defence ratings to calculate expected goals.' },
-            { icon: 'ð', title: 'Live Updates', desc: 'As matches complete, results feed back into the model throughout the tournament.' },
-            { icon: 'ð¯', title: 'Full Predictions', desc: 'Every match gets a predicted score, win/draw/loss probabilities, corners, cards, and AI reasoning.' },
+            { icon: '📊', title: 'Statistical Model', desc: 'Poisson distribution uses FIFA rankings, attack and defence ratings to calculate expected goals.' },
+            { icon: '🔄', title: 'Live Updates', desc: 'As matches complete, results feed back into the model throughout the tournament.' },
+            { icon: '🎯', title: 'Full Predictions', desc: 'Every match gets a predicted score, win/draw/loss probabilities, corners, cards, and AI reasoning.' },
           ].map(card => (
             <div key={card.title} className="bg-fifa-card border border-fifa-border rounded-xl p-5 space-y-2">
               <span className="text-3xl">{card.icon}</span>
@@ -120,10 +120,10 @@ export default function HomePage() {
       <section>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: 'Teams', value: '48', icon: 'ð³ï¸' },
-            { label: 'Groups', value: '12', icon: 'ð' },
-            { label: 'Matches', value: '104', icon: 'â½' },
-            { label: 'Host Cities', value: '16', icon: 'ðï¸' },
+            { label: 'Teams', value: '48', icon: '🏳️' },
+            { label: 'Groups', value: '12', icon: '📋' },
+            { label: 'Matches', value: '104', icon: '⚽' },
+            { label: 'Host Cities', value: '16', icon: '🏟️' },
           ].map(stat => (
             <div key={stat.label} className="bg-fifa-card border border-fifa-border rounded-xl p-4 text-center">
               <div className="text-3xl mb-1">{stat.icon}</div>
@@ -153,8 +153,8 @@ function FeaturedFixtureCard({ fixture, prediction }: { fixture: typeof MATCHDAY
         <div className="flex items-center justify-between gap-2">
           <div className="flex-1 flex justify-center"><TeamFlag teamName={homeTeam} size={28} showName namePosition="below" /></div>
           <div className="text-center">
-            <div className="text-blue-400 text-2xl font-black">{prediction.predictedScore.home} â {prediction.predictedScore.away}</div>
-            <div className="text-gray-500 text-xs">{time} UTC Â· {date}</div>
+            <div className="text-blue-400 text-2xl font-black">{prediction.predictedScore.home} – {prediction.predictedScore.away}</div>
+            <div className="text-gray-500 text-xs">{time} UTC · {date}</div>
           </div>
           <div className="flex-1 flex justify-center"><TeamFlag teamName={awayTeam} size={28} showName namePosition="below" /></div>
         </div>
@@ -166,7 +166,7 @@ function FeaturedFixtureCard({ fixture, prediction }: { fixture: typeof MATCHDAY
         <div className="flex justify-between text-xs text-gray-500 mt-1">
           <span>{homeWinPct}%</span><span>Draw {drawPct}%</span><span>{awayWinPct}%</span>
         </div>
-        <div className="mt-2 text-xs text-gray-500 text-center">ð {venue}, {city}</div>
+        <div className="mt-2 text-xs text-gray-500 text-center">📍 {venue}, {city}</div>
       </div>
     </div>
   );
