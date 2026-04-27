@@ -2,216 +2,202 @@ import { MATCHDAY_1_FIXTURES, TEAMS } from '@/lib/constants';
 import { predictMatch, calculateAccuracy } from '@/lib/predictions';
 import TeamFlag from '@/components/TeamFlag';
 
-// Pre-compute all matchday 1 predictions for stats display
 const allPredictions = MATCHDAY_1_FIXTURES.map(f => ({
   fixture: f,
-  prediction: predictMatch(f.homeTeam, f.awayTeam),
+  prediction: predictMatch(
+    f.homeTeam, f.awayTeam,
+    f.homeScore !== undefined && f.awayScore !== undefined
+      ? { homeGoals: f.homeScore, awayGoals: f.awayScore }
+      : undefined
+  ),
 }));
 
-// Aggregate stats across all predicted matches
-const totalCorners = allPredictions.reduce((sum, { prediction }) => sum + prediction.predictedCorners, 0);
-const totalCards = allPredictions.reduce((sum, { prediction }) => sum + prediction.predictedYellowCards, 0);
-const avgGoals = allPredictions.reduce((sum, { prediction }) => sum + prediction.expectedHomeGoals + prediction.expectedAwayGoals, 0) / allPredictions.length;
-const avgCorners = totalCorners / allPredictions.length;
-const avgCards = totalCards / allPredictions.length;
+const completed = allPredictions.filter(p => p.fixture.status === 'FT');
+const accuracy = calculateAccuracy(completed.map(p => p.prediction));
 
-// Top scorers — teams expected to score most
-const teamExpectedGoals = Object.values(TEAMS).map(team => {
-  const homeFixtures = MATCHDAY_1_FIXTURES.filter(f => f.homeTeam === team.name);
-  const awayFixtures = MATCHDAY_1_FIXTURES.filter(f => f.awayTeam === team.name);
-  let totalExpected = 0;
-  homeFixtures.forEach(f => { totalExpected += predictMatch(f.homeTeam, f.awayTeam).expectedHomeGoals; });
-  awayFixtures.forEach(f => { totalExpected += predictMatch(f.homeTeam, f.awayTeam).expectedAwayGoals; });
-  return { team, expectedGoals: Math.round(totalExpected * 100) / 100 };
-}).sort((a, b) => b.expectedGoals - a.expectedGoals).slice(0, 10);
-
-// Most exciting matches (highest combined expected goals)
-const excitingMatches = [...allPredictions]
-  .sort((a, b) => (b.prediction.expectedHomeGoals + b.prediction.expectedAwayGoals) - (a.prediction.expectedHomeGoals + a.prediction.expectedAwayGoals))
-  .slice(0, 5);
-
-// Biggest mismatches (highest confidence predictions)
-const biggestMismatches = [...allPredictions]
-  .filter(({ prediction }) => prediction.confidence === 'high')
-  .sort((a, b) => {
-    const aGap = Math.abs(TEAMS[a.fixture.homeTeam]?.fifaRank - TEAMS[a.fixture.awayTeam]?.fifaRank) || 0;
-    const bGap = Math.abs(TEAMS[b.fixture.homeTeam]?.fifaRank - TEAMS[b.fixture.awayTeam]?.fifaRank) || 0;
-    return bGap - aGap;
-  }).slice(0, 5);
-
-// Closest contests (lowest confidence / most even)
-const closestContests = [...allPredictions]
-  .filter(({ prediction }) => prediction.confidence === 'low')
-  .sort((a, b) => {
-    const aBalance = Math.abs(a.prediction.homeWinProbability - a.prediction.awayWinProbability);
-    const bBalance = Math.abs(b.prediction.homeWinProbability - b.prediction.awayWinProbability);
-    return aBalance - bBalance;
-  }).slice(0, 5);
+function cornersCorrect(pred: number, homeC?: number, awayC?: number) {
+  if (homeC === undefined || awayC === undefined) return null;
+  return Math.abs(pred - (homeC + awayC)) <= 2;
+}
+function cardsCorrect(pred: number, homeY?: number, awayY?: number) {
+  if (homeY === undefined || awayY === undefined) return null;
+  return Math.abs(pred - (homeY + awayY)) <= 1;
+}
 
 export default function StatsPage() {
+  const totalGoals = completed.reduce((s,p)=>s+(p.fixture.homeScore??0)+(p.fixture.awayScore??0),0);
+  const totalCorners = completed.reduce((s,p)=>s+(p.fixture.homeCorners??0)+(p.fixture.awayCorners??0),0);
+  const totalYellows = completed.reduce((s,p)=>s+(p.fixture.homeYellowCards??0)+(p.fixture.awayYellowCards??0),0);
+  const avgGoals = completed.length > 0 ? (totalGoals/completed.length).toFixed(2) : '—';
+  const avgCorners = completed.length > 0 ? (totalCorners/completed.length).toFixed(1) : '—';
+  const avgYellows = completed.length > 0 ? (totalYellows/completed.length).toFixed(1) : '—';
+
+  // Corners & cards accuracy
+  const cornersChecked = completed.filter(p=>p.fixture.homeCorners!==undefined);
+  const cornersRight = cornersChecked.filter(p=>cornersCorrect(p.prediction.predictedCorners,p.fixture.homeCorners,p.fixture.awayCorners)===true);
+  const cardsChecked = completed.filter(p=>p.fixture.homeYellowCards!==undefined);
+  const cardsRight = cardsChecked.filter(p=>cardsCorrect(p.prediction.predictedYellowCards,p.fixture.homeYellowCards,p.fixture.awayYellowCards)===true);
+  const cornersPct = cornersChecked.length>0?Math.round(cornersRight.length/cornersChecked.length*100):null;
+  const cardsPct = cardsChecked.length>0?Math.round(cardsRight.length/cardsChecked.length*100):null;
+
   return (
-    <div className="space-y-10">
-      {/* Header */}
+    <div className="space-y-8">
       <div className="space-y-2">
-        <h1 className="text-white text-3xl font-black">📊 Prediction Statistics</h1>
-        <p className="text-gray-400">AI-generated insights across all 24 Matchday 1 fixtures.</p>
+        <h1 className="text-white text-3xl font-black">🎯 Stats & Prediction Accuracy</h1>
+        <p className="text-gray-400">Live match statistics and running prediction accuracy tracker. Updates after every completed match.</p>
       </div>
 
-      {/* Summary Cards */}
+      {completed.length === 0 && (
+        <div className="bg-blue-900/20 border border-blue-800/40 rounded-xl p-6 text-center space-y-2">
+          <div className="text-4xl">⏳</div>
+          <h2 className="text-white font-bold text-lg">No matches played yet</h2>
+          <p className="text-gray-400 text-sm">Stats will populate once Matchday 1 kicks off on <strong className="text-white">11 June 2026</strong>.</p>
+        </div>
+      )}
+
+      {/* Accuracy Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Avg Goals/Game', value: avgGoals.toFixed(1), icon: '⚽', color: 'text-green-400' },
-          { label: 'Avg Corners/Game', value: avgCorners.toFixed(1), icon: '🔄', color: 'text-blue-400' },
-          { label: 'Avg Cards/Game', value: avgCards.toFixed(1), icon: '🟨', color: 'text-yellow-400' },
-          { label: 'Fixtures Predicted', value: String(allPredictions.length), icon: '🤖', color: 'text-purple-400' },
-        ].map(stat => (
-          <div key={stat.label} className="bg-fifa-card border border-fifa-border rounded-xl p-4 text-center">
-            <div className="text-3xl mb-1">{stat.icon}</div>
-            <div className={`text-3xl font-black ${stat.color}`}>{stat.value}</div>
-            <div className="text-gray-500 text-xs mt-1">{stat.label}</div>
-          </div>
-        ))}
+        <div className="bg-fifa-card border border-fifa-border rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">Matches Predicted</div>
+          <div className="text-white text-4xl font-black">{accuracy.totalPredicted||MATCHDAY_1_FIXTURES.length}</div>
+          <div className="text-gray-600 text-xs mt-1">{completed.length} completed of {MATCHDAY_1_FIXTURES.length}</div>
+        </div>
+        <div className="bg-fifa-card border border-green-800/40 rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">✅ Correct Results</div>
+          <div className="text-green-400 text-4xl font-black">{completed.length>0?`${accuracy.resultPct}%`:'—'}</div>
+          <div className="text-gray-600 text-xs mt-1">Win / draw / loss</div>
+        </div>
+        <div className="bg-fifa-card border border-blue-800/40 rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">🎯 Exact Scores</div>
+          <div className="text-blue-400 text-4xl font-black">{completed.length>0?`${accuracy.exactScorePct}%`:'—'}</div>
+          <div className="text-gray-600 text-xs mt-1">Exact scoreline</div>
+        </div>
+        <div className="bg-fifa-card border border-purple-800/40 rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">🚩 Corners ±2</div>
+          <div className="text-purple-400 text-4xl font-black">{cornersPct!==null?`${cornersPct}%`:'—'}</div>
+          <div className="text-gray-600 text-xs mt-1">{cornersRight.length}/{cornersChecked.length} within 2</div>
+        </div>
       </div>
 
-      {/* Two column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-        {/* Top Expected Scorers */}
-        <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">🎯 Top Teams by Expected Goals</h2>
-          <p className="text-gray-500 text-sm">Expected goals across Matchday 1 based on the Poisson model.</p>
-          <div className="space-y-2">
-            {teamExpectedGoals.map(({ team, expectedGoals }, i) => (
-              <div key={team.name} className="bg-fifa-card border border-fifa-border rounded-xl p-3 flex items-center gap-3">
-                <span className="text-gray-600 text-sm font-bold w-5 text-right">{i + 1}</span>
-                <TeamFlag teamName={team.name} size={24} />
-                <span className="text-white text-sm flex-1">{team.name}</span>
-                <div className="flex items-center gap-2">
-                  <div className="h-1.5 rounded-full bg-blue-500/30 w-20">
-                    <div
-                      className="h-1.5 rounded-full bg-blue-400"
-                      style={{ width: `${Math.min(100, (expectedGoals / 2.5) * 100)}%` }}
-                    />
-                  </div>
-                  <span className="text-blue-400 text-sm font-bold w-8 text-right">{expectedGoals}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Most Exciting Matches */}
-        <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">🔥 Most Goals Expected</h2>
-          <p className="text-gray-500 text-sm">Matches predicted to have the highest combined goal tally.</p>
-          <div className="space-y-2">
-            {excitingMatches.map(({ fixture, prediction }) => (
-              <div key={fixture.id} className="bg-fifa-card border border-fifa-border rounded-xl p-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 flex-1">
-                    <TeamFlag teamName={fixture.homeTeam} size={18} />
-                    <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
-                  </div>
-                  <div className="text-center px-3">
-                    <div className="text-blue-400 font-black text-sm">{prediction.predictedScore.home}–{prediction.predictedScore.away}</div>
-                    <div className="text-green-400 text-xs">{(prediction.expectedHomeGoals + prediction.expectedAwayGoals).toFixed(1)} xG</div>
-                  </div>
-                  <div className="flex items-center gap-2 flex-1 justify-end">
-                    <span className="text-gray-300 text-sm truncate">{fixture.awayTeam}</span>
-                    <TeamFlag teamName={fixture.awayTeam} size={18} />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Biggest Mismatches */}
-        <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">💪 Biggest Mismatches</h2>
-          <p className="text-gray-500 text-sm">Highest confidence predictions — largest FIFA ranking gaps.</p>
-          <div className="space-y-2">
-            {biggestMismatches.map(({ fixture, prediction }) => {
-              const homeWin = Math.round(prediction.homeWinProbability * 100);
-              const awayWin = Math.round(prediction.awayWinProbability * 100);
-              const favourite = homeWin > awayWin ? fixture.homeTeam : fixture.awayTeam;
-              const winPct = Math.max(homeWin, awayWin);
-              return (
-                <div key={fixture.id} className="bg-fifa-card border border-fifa-border rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-1">
-                      <TeamFlag teamName={fixture.homeTeam} size={18} />
-                      <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
-                    </div>
-                    <div className="text-blue-400 font-black text-sm px-3">
-                      {prediction.predictedScore.home}–{prediction.predictedScore.away}
-                    </div>
-                    <div className="flex items-center gap-2 flex-1 justify-end">
-                      <span className="text-gray-300 text-sm truncate">{fixture.awayTeam}</span>
-                      <TeamFlag teamName={fixture.awayTeam} size={18} />
-                    </div>
-                  </div>
-                  <div className="mt-1 text-center">
-                    <span className="text-green-400 text-xs">{favourite} {winPct}% to win</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Closest Contests */}
-        <section className="space-y-3">
-          <h2 className="text-white text-xl font-black">⚖️ Tightest Contests</h2>
-          <p className="text-gray-500 text-sm">Matches where the AI model rates both teams almost equal.</p>
-          <div className="space-y-2">
-            {closestContests.map(({ fixture, prediction }) => {
-              const homeWin = Math.round(prediction.homeWinProbability * 100);
-              const draw = Math.round(prediction.drawProbability * 100);
-              const awayWin = Math.round(prediction.awayWinProbability * 100);
-              return (
-                <div key={fixture.id} className="bg-fifa-card border border-fifa-border rounded-xl p-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 flex-1">
-                      <TeamFlag teamName={fixture.homeTeam} size={18} />
-                      <span className="text-gray-300 text-sm truncate">{fixture.homeTeam}</span>
-                    </div>
-                    <div className="text-blue-400 font-black text-sm px-3">
-                      {prediction.predictedScore.home}–{prediction.predictedScore.away}
-                    </div>
-                    <div className="flex items-center gap-2 flex-1 justify-end">
-                      <span className="text-gray-300 text-sm truncate">{fixture.awayTeam}</span>
-                      <TeamFlag teamName={fixture.awayTeam} size={18} />
-                    </div>
-                  </div>
-                  <div className="mt-2 h-1.5 rounded-full overflow-hidden flex">
-                    <div className="bg-blue-500" style={{ width: `${homeWin}%` }} />
-                    <div className="bg-gray-600" style={{ width: `${draw}%` }} />
-                    <div className="bg-red-500" style={{ width: `${awayWin}%` }} />
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>{homeWin}%</span><span>Draw {draw}%</span><span>{awayWin}%</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+      {/* Cards accuracy row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-fifa-card border border-yellow-800/40 rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">🟨 Cards ±1</div>
+          <div className="text-yellow-400 text-4xl font-black">{cardsPct!==null?`${cardsPct}%`:'—'}</div>
+          <div className="text-gray-600 text-xs mt-1">{cardsRight.length}/{cardsChecked.length} within 1 card</div>
+        </div>
+        <div className="bg-fifa-card border border-fifa-border rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">⚽ Avg Goals/Match</div>
+          <div className="text-white text-4xl font-black">{avgGoals}</div>
+          <div className="text-gray-600 text-xs mt-1">{totalGoals} total goals</div>
+        </div>
+        <div className="bg-fifa-card border border-fifa-border rounded-xl p-5 text-center">
+          <div className="text-gray-500 text-sm font-medium mb-2">📅 Matches Played</div>
+          <div className="text-white text-4xl font-black">{completed.length}</div>
+          <div className="text-gray-600 text-xs mt-1">of 104 total</div>
+        </div>
       </div>
 
-      {/* Methodology */}
-      <section className="bg-fifa-card border border-fifa-border rounded-2xl p-6 space-y-4">
-        <h2 className="text-white text-xl font-black">🧪 Model Methodology</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-400 leading-relaxed">
-          <div>
-            <h3 className="text-white font-bold mb-2">Poisson Distribution Model</h3>
-            <p>Expected goals for each team are calculated using: λ = (attack / opponent’s defence) × historical WC average (1.30 goals/team).</p>
-            <p className="mt-2">This gives us a probability matrix of all possible scores from 0–6 goals each. The most likely score is selected as the prediction.</p>
+      {/* Match-by-Match Tracker */}
+      <section className="space-y-4">
+        <h2 className="text-white text-xl font-black">📋 Match-by-Match Prediction Tracker</h2>
+        <div className="bg-fifa-card border border-fifa-border rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-fifa-border text-gray-500 text-xs uppercase">
+                  <th className="text-left px-3 py-3">Match</th>
+                  <th className="px-3 py-3">Pred.</th>
+                  <th className="px-3 py-3">Actual</th>
+                  <th className="px-3 py-3">Result</th>
+                  <th className="px-3 py-3">Score</th>
+                  <th className="px-3 py-3 hidden sm:table-cell">Corners</th>
+                  <th className="px-3 py-3 hidden sm:table-cell">Cards</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allPredictions.map(({fixture,prediction})=>{
+                  const done=fixture.status==='FT';
+                  const actCorners=fixture.homeCorners!==undefined?(fixture.homeCorners!+fixture.awayCorners!):undefined;
+                  const actCards=fixture.homeYellowCards!==undefined?(fixture.homeYellowCards!+fixture.awayYellowCards!):undefined;
+                  const cOk=cornersCorrect(prediction.predictedCorners,fixture.homeCorners,fixture.awayCorners);
+                  const yOk=cardsCorrect(prediction.predictedYellowCards,fixture.homeYellowCards,fixture.awayYellowCards);
+                  return (
+                    <tr key={fixture.id} className="border-b border-fifa-border/50 hover:bg-white/5">
+                      <td className="px-3 py-3 max-w-[160px]">
+                        <div className="flex flex-wrap items-center gap-1 text-xs">
+                          <TeamFlag teamName={fixture.homeTeam} size={12} />
+                          <span className="text-gray-300 truncate max-w-[55px] sm:max-w-none">{fixture.homeTeam}</span>
+                          <span className="text-gray-600 text-[10px]">vs</span>
+                          <TeamFlag teamName={fixture.awayTeam} size={12} />
+                          <span className="text-gray-300 truncate max-w-[55px] sm:max-w-none">{fixture.awayTeam}</span>
+                        </div>
+                        <div className="text-gray-600 text-xs mt-0.5">Grp {fixture.group} · {fixture.date}</div>
+                      </td>
+                      <td className="px-3 py-3 text-center"><span className="text-white font-bold">{prediction.predictedScore.home}–{prediction.predictedScore.away}</span></td>
+                      <td className="px-3 py-3 text-center">{done?<span className="text-white font-bold">{fixture.homeScore}–{fixture.awayScore}</span>:<span className="text-gray-600">TBP</span>}</td>
+                      <td className="px-3 py-3 text-center">{done?(prediction.resultCorrect?<span className="text-green-400 font-bold">✓</span>:<span className="text-red-400 font-bold">✗</span>):<span className="text-gray-600">—</span>}</td>
+                      <td className="px-3 py-3 text-center">{done?(prediction.scoreCorrect?<span className="text-green-400 font-bold">✓</span>:<span className="text-red-400 font-bold">✗</span>):<span className="text-gray-600">—</span>}</td>
+                      <td className="px-3 py-3 text-center hidden sm:table-cell">
+                        <span className="text-gray-400">{prediction.predictedCorners}</span>
+                        {actCorners!==undefined&&<span className="text-gray-600 ml-1">({actCorners})</span>}
+                        {cOk!==null&&(cOk?<span className="text-green-400 ml-1">✓</span>:<span className="text-red-400 ml-1">✗</span>)}
+                      </td>
+                      <td className="px-3 py-3 text-center hidden sm:table-cell">
+                        <span className="text-yellow-500">{prediction.predictedYellowCards}</span>
+                        {actCards!==undefined&&<span className="text-gray-600 ml-1">({actCards})</span>}
+                        {yOk!==null&&(yOk?<span className="text-green-400 ml-1">✓</span>:<span className="text-red-400 ml-1">✗</span>)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <h3 className="text-white font-bold mb-2">Team Ratings</h3>
-            <p>Attack and defence ratings (0.5–2.5 scale) are derived from FIFA world rankings. The current world #1 (Argentina) has a 2.3 attack rating; the lowest-ranked teams have 0.5–0.8.</p>
-            <p className="mt-2">Corner and card predictions use WC historical averages adjusted by team style factors from the ratings database.</p>
+        </div>
+        <p className="text-gray-600 text-xs">Corners ✓ = within ±2 of actual. Cards ✓ = within ±1 of actual. Pred. shown first, actual in brackets.</p>
+      </section>
+
+      {/* Team Ratings */}
+      <section className="space-y-4">
+        <h2 className="text-white text-xl font-black">⚡ Team Prediction Ratings</h2>
+        <p className="text-gray-400 text-sm">Attack = expected goals per game vs average opponent. Defense = goals conceded factor (lower = better).</p>
+        <div className="bg-fifa-card border border-fifa-border rounded-xl overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-fifa-border text-gray-500 text-xs uppercase">
+                  <th className="text-left px-4 py-3">Team</th>
+                  <th className="px-3 py-3">Rank</th>
+                  <th className="px-3 py-3">⚔️ Attack</th>
+                  <th className="px-3 py-3">🛡️ Defense</th>
+                  <th className="px-3 py-3 hidden md:table-cell">Corners</th>
+                  <th className="px-3 py-3 hidden md:table-cell">Cards</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(TEAMS).sort((a,b)=>a[1].fifaRank-b[1].fifaRank).map(([name,team])=>(
+                  <tr key={name} className="border-b border-fifa-border/50 hover:bg-white/5">
+                    <td className="px-4 py-2.5"><TeamFlag teamName={name} size={16} showName namePosition="right" /></td>
+                    <td className="px-3 py-2.5 text-center text-gray-400 font-medium">#{team.fifaRank}</td>
+                    <td className="px-3 py-2.5 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-2 rounded-full bg-gradient-to-r from-yellow-500 to-red-500" style={{width:`${(team.attackRating/2.5)*60}px`}}/>
+                        <span className="text-white font-mono text-xs">{team.attackRating.toFixed(2)}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2.5 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="h-2 rounded-full bg-gradient-to-r from-green-500 to-blue-500" style={{width:`${((2.5-team.defenseRating)/2.0)*60}px`}}/>
+                        <span className="text-white font-mono text-xs">{team.defenseRating.toFixed(2)}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-2.5 text-center text-gray-400 hidden md:table-cell">{team.avgCornersFor}</td>
+                    <td className="px-3 py-2.5 text-center text-yellow-500 hidden md:table-cell">{team.avgCardsPerGame}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
