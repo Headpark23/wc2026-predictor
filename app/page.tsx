@@ -3,6 +3,7 @@ import TeamFlag from '@/components/TeamFlag';
 import { TOURNAMENT, GROUPS, MATCHDAY_1_FIXTURES } from '@/lib/constants';
 import { predictMatch } from '@/lib/predictions';
 import Link from 'next/link';
+import { predictMatch as pm } from '@/lib/predictions';
 
 const FEATURED_FIXTURES = [
   MATCHDAY_1_FIXTURES.find(f => f.id === 'L1a')!,
@@ -53,17 +54,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="grid grid-cols-3 gap-2 sm:gap-4">
+      <section className="grid grid-cols-3 gap-4">
         {[
           { country: 'USA', flag: 'us', cities: '11 cities', matches: '60 matches' },
           { country: 'Canada', flag: 'ca', cities: '2 cities', matches: '10 matches' },
           { country: 'Mexico', flag: 'mx', cities: '3 cities', matches: '13 matches' },
         ].map(h => (
-          <div key={h.country} className="bg-fifa-card border border-fifa-border rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-center sm:text-left hover:border-blue-800 transition-colors">
-            <img src={`https://flagcdn.com/w40/${h.flag}.png`} alt={h.country} className="w-10 h-7 object-cover rounded shadow flex-shrink-0" />
+          <div key={h.country} className="bg-fifa-card border border-fifa-border rounded-xl p-4 flex items-center gap-3 hover:border-blue-800 transition-colors">
+            <img src={`https://flagcdn.com/w40/${h.flag}.png`} alt={h.country} className="w-10 h-7 object-cover rounded shadow" />
             <div>
-              <div className="text-white font-bold text-sm sm:text-base truncate">{h.country}</div>
-              <div className="text-gray-500 text-xs hidden sm:block">{h.cities} · {h.matches}</div>
+              <div className="text-white font-bold">{h.country}</div>
+              <div className="text-gray-500 text-xs">{h.cities} · {h.matches}</div>
             </div>
           </div>
         ))}
@@ -150,13 +151,13 @@ function FeaturedFixtureCard({ fixture, prediction }: { fixture: typeof MATCHDAY
         <span className={`text-xs px-2 py-0.5 rounded font-semibold ${channelColor}`}>{ukChannel}</span>
       </div>
       <div className="p-4">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex-1 flex justify-center"><TeamFlag teamName={homeTeam} size={28} showName namePosition="below" /></div>
+        <div className="flex items-center justify-between gap-4">
+          <TeamFlag teamName={homeTeam} size={32} showName namePosition="below" />
           <div className="text-center">
             <div className="text-blue-400 text-2xl font-black">{prediction.predictedScore.home} – {prediction.predictedScore.away}</div>
             <div className="text-gray-500 text-xs">{time} UTC · {date}</div>
           </div>
-          <div className="flex-1 flex justify-center"><TeamFlag teamName={awayTeam} size={28} showName namePosition="below" /></div>
+          <TeamFlag teamName={awayTeam} size={32} showName namePosition="below" />
         </div>
         <div className="mt-3 h-2 rounded-full overflow-hidden flex">
           <div className="bg-blue-500" style={{ width: `${homeWinPct}%` }} />
