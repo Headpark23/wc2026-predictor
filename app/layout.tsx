@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navigation from '@/components/Navigation';
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: 'World Cup 2026 AI Predictor',
-  description:
-    'AI-powered predictions for every FIFA World Cup 2026 match. Score predictions, corners, cards and more — powered by statistical modelling.',
+  description: 'AI-powered predictions for every FIFA World Cup 2026 match. Score predictions, corners, cards and more — powered by statistical modelling.',
   keywords: 'World Cup 2026, FIFA, predictions, AI, football, soccer, WC2026',
   openGraph: {
     title: 'World Cup 2026 AI Predictor',
@@ -34,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             © {new Date().getFullYear()} Martin White
           </p>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
