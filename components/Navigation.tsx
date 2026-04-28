@@ -12,6 +12,7 @@ const navItems = [
   { href: '/h2h',       label: 'H2H',      icon: '⚔️' },
   { href: '/heatmap',   label: 'Heatmap',  icon: '🌡️' },
   { href: '/winner',    label: 'Winner',   icon: '🏆' },
+  { href: '/standings', label: 'Standings', icon: '📋' },
 ];
 
 export default function Navigation() {
