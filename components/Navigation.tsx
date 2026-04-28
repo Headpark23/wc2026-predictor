@@ -10,6 +10,7 @@ const navItems = [
   { href: '/groups',    label: 'Groups',   icon: '📊' },
   { href: '/stats',     label: 'Stats',    icon: '🎯' },
   { href: '/h2h',       label: 'H2H',      icon: '⚔️' },
+  { href: '/heatmap',   label: 'Heatmap',  icon: '🌡️' },
 ];
 
 export default function Navigation() {
@@ -24,7 +25,7 @@ export default function Navigation() {
             <span className="text-2xl">⚽</span>
             <span className="text-white font-black tracking-tight hidden sm:block">
               WC<span className="text-fifa-red">2026</span>
-    0         <span className="text-gray-400 font-normal text-sm ml-2">AI Predictor</span>
+              <span className="text-gray-400 font-normal text-sm ml-2">AI Predictor</span>
             </span>
           </Link>
 
