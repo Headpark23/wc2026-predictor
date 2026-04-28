@@ -1,56 +1,56 @@
 'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
-const NAV_LINKS = [
-  { href: '/', label: '🏠 Home' },
-  { href: '/fixtures', label: '📅 Fixtures' },
-  { href: '/groups', label: '📋 Groups' },
-  { href: '/stats', label: '📊 Stats' },
+const navItems = [
+  { href: '/',          label: 'Home',     icon: '🏠' },
+  { href: '/fixtures',  label: 'Fixtures', icon: '📅' },
+  { href: '/groups',    label: 'Groups',   icon: '📊' },
+  { href: '/stats',     label: 'Stats',    icon: '🎯' },
+  { href: '/h2h',       label: 'H2H',      icon: '⚔️' },
 ];
 
 export default function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-fifa-card border-b border-fifa-border sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 bg-fifa-darker border-b border-fifa-border shadow-lg">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl">
             <span className="text-2xl">⚽</span>
-            <div>
-              <div className="text-white font-black text-sm leading-tight">WC 2026</div>
-              <div className="text-blue-400 text-xs leading-tight">AI Predictor</div>
-            </div>
+            <span className="text-white font-black tracking-tight hidden sm:block">
+              WC<span className="text-fifa-red">2026</span>
+    0         <span className="text-gray-400 font-normal text-sm ml-2">AI Predictor</span>
+            </span>
           </Link>
 
-          {/* Nav links */}
+          {/* Nav Links */}
           <div className="flex items-center gap-1">
-            {NAV_LINKS.map(link => {
-              const isActive = link.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-fifa-blue text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {navItems.map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                  pathname === item.href
+                    ? 'bg-fifa-blue text-white shadow-lg shadow-blue-900/30'
+                    : 'text-gray-400 hover:text-white hover:bg-white/10'
+                )}
+              >
+                <span className="text-base">{item.icon}</span>
+                <span className="hidden sm:inline">{item.label}</span>
+              </Link>
+            ))}
           </div>
 
           {/* Live badge */}
           <div className="flex items-center gap-2 text-xs">
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-green-400 font-medium">Live from Jun 11</span>
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse flex-shrink-0" />
+            <span className="text-gray-400 hidden md:inline">AI Predictions Live</span>
           </div>
         </div>
       </div>
