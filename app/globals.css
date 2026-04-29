@@ -1,50 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --fifa-red: #D4171E;
-  --fifa-blue: #003DA5;
-  --fifa-gold: #C9A84C;
-  --fifa-dark: #0A0E1A;
-  --fifa-card: #111827;
-  --fifa-border: #1F2937;
+* {
+  box-sizing: border-box;
 }
-
-* { box-sizing: border-box; }
 
 body {
-  background-color: var(--fifa-dark);
-  color: #F9FAFB;
-  font-family: 'Inter', sans-serif;
+  background-color: #0A0E1A;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--fifa-dark); }
-::-webkit-scrollbar-thumb { background: var(--fifa-border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #374151; }
-
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, var(--fifa-red), var(--fifa-gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0E1A;
+}
+::-webkit-scrollbar-thumb {
+  background: #1F2937;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
 }
 
-/* Card hover effect */
-.card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Smooth transitions */
+* {
+  transition-property: color, background-color, border-color, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(212, 23, 30, 0.15);
-}
-
-/* Live pulse animation */
-@keyframes live-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-.live-dot { animation: live-pulse 1.5s ease-in-out infinite; }
