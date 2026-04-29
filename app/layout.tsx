@@ -3,14 +3,48 @@ import './globals.css';
 import Navigation from '@/components/Navigation';
 import { Analytics } from '@vercel/analytics/react';
 
+const siteUrl = 'https://wc2026-predictor.vercel.app';
+
 export const metadata: Metadata = {
-  title: 'World Cup 2026 AI Predictor',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'World Cup 2026 AI Predictor',
+    template: '%s | WC2026 AI Predictor',
+  },
   description: 'AI-powered predictions for every FIFA World Cup 2026 match. Score predictions, corners, cards and more — powered by statistical modelling.',
-  keywords: 'World Cup 2026, FIFA, predictions, AI, football, soccer, WC2026',
+  keywords: ['World Cup 2026', 'FIFA', 'predictions', 'AI', 'football', 'soccer', 'WC2026', 'match predictions'],
+  authors: [{ name: 'Martin White' }],
+  creator: 'Martin White',
   openGraph: {
     title: 'World Cup 2026 AI Predictor',
-    description: 'AI-powered predictions for every WC 2026 match',
+    description: 'AI-powered predictions for every WC 2026 match — scores, corners, cards and more.',
+    url: siteUrl,
+    siteName: 'WC2026 AI Predictor',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'World Cup 2026 AI Predictor',
+      },
+    ],
     type: 'website',
+    locale: 'en_GB',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'World Cup 2026 AI Predictor',
+    description: 'AI-powered predictions for every WC 2026 match — scores, corners, cards.',
+    images: ['/opengraph-image'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
   },
 };
 
