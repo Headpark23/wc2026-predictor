@@ -1,7 +1,6 @@
 'use client';
 
 import { TEAMS } from '@/lib/constants';
-import { getFlagEmoji } from '@/lib/utils';
 
 interface TeamFlagProps {
   teamName: string;
@@ -20,33 +19,8 @@ export default function TeamFlag({
 }: TeamFlagProps) {
   const team = TEAMS[teamName];
   const code = team?.code || 'un';
-  const isSubdivision = code.includes('-');
 
-  // Use emoji for UK home nations (subdivision codes)
-  if (isSubdivision) {
-    const emoji = getFlagEmoji(code);
-    if (namePosition === 'below') {
-      return (
-        <div className={`flex flex-col items-center gap-1.5 ${className}`}>
-          <span style={{ fontSize: size * 0.7 }}>{emoji}</span>
-          {showName && (
-            <span className="text-white text-xs font-semibold text-center leading-tight max-w-[80px]">
-              {teamName}
-            </span>
-          )}
-        </div>
-      );
-    }
-    return (
-      <div className={`flex items-center gap-2 ${className}`}>
-        <span style={{ fontSize: size * 0.7 }}>{emoji}</span>
-        {showName && (
-          <span className="text-white font-medium">{teamName}</span>
-        )}
-      </div>
-    );
-  }
-
+  // flagcdn.com supports both country codes (e.g. 'fr') and subdivision codes (e.g. 'gb-eng', 'gb-sct')
   const src = `https://flagcdn.com/w80/${code}.png`;
 
   if (namePosition === 'below') {
