@@ -82,7 +82,7 @@ export default function FixturesPage() {
       setLiveState(data);
       setLastUpdated(new Date());
     } catch {
-      // non-critical — predictions still work without live data
+      // non-critical â predictions still work without live data
     }
   }, []);
 
@@ -99,16 +99,16 @@ export default function FixturesPage() {
   return (
     <div className="space-y-8">
 
-      {/* ── Header ── */}
+      {/* ââ Header ââ */}
       <div className="space-y-2">
-        <h1 className="text-white text-3xl font-black">📅 Fixtures &amp; Predictions</h1>
+        <h1 className="text-white text-3xl font-black">ð Fixtures &amp; Predictions</h1>
         <p className="text-gray-400">
           Matchday 1 predictions across all 12 groups. All kick-off times in{' '}
           <strong className="text-white">UTC</strong> (+1 for BST).
         </p>
       </div>
 
-      {/* ── Mode toggle ── */}
+      {/* ââ Mode toggle ââ */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="bg-fifa-card border border-fifa-border rounded-xl p-1 flex gap-1">
           <button
@@ -119,7 +119,7 @@ export default function FixturesPage() {
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            🔮 Predictions
+            ð® Predictions
           </button>
           <button
             onClick={() => setMode('results')}
@@ -129,7 +129,7 @@ export default function FixturesPage() {
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            📊 Results
+            ð Results
             {hasFinished && (
               <span className="bg-green-500 text-white text-xs font-black rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
                 {liveState!.finished.length}
@@ -156,19 +156,19 @@ export default function FixturesPage() {
         )}
       </div>
 
-      {/* ── Matchday tabs ── */}
+      {/* ââ Matchday tabs ââ */}
       <div className="flex gap-2 flex-wrap">
         <button className="bg-fifa-blue text-white px-4 py-2 rounded-lg text-sm font-bold">Matchday 1</button>
-        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Matchday 2 🔒</button>
-        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Matchday 3 🔒</button>
-        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Round of 32 🔒</button>
-        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Round of 16 🔒</button>
+        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Matchday 2 ð</button>
+        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Matchday 3 ð</button>
+        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Round of 32 ð</button>
+        <button className="bg-fifa-card border border-fifa-border text-gray-500 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed" disabled>Round of 16 ð</button>
       </div>
 
-      {/* ── Results mode — no results yet ── */}
+      {/* ââ Results mode â no results yet ââ */}
       {mode === 'results' && !hasFinished && (
         <div className="bg-gray-900/60 border border-gray-700/40 rounded-xl p-10 text-center">
-          <div className="text-5xl mb-4">⏳</div>
+          <div className="text-5xl mb-4">â³</div>
           <p className="text-white font-black text-xl mb-2">No results yet</p>
           <p className="text-gray-400 text-sm">
             Results will appear here automatically once Matchday 1 kicks off on{' '}
@@ -186,10 +186,10 @@ export default function FixturesPage() {
         </div>
       )}
 
-      {/* ── Predictions info banner ── */}
+      {/* ââ Predictions info banner ââ */}
       {mode === 'predictions' && (
         <div className="bg-blue-900/20 border border-blue-800/40 rounded-xl p-4 flex items-start gap-3">
-          <span className="text-blue-400 text-xl flex-shrink-0">💡</span>
+          <span className="text-blue-400 text-xl flex-shrink-0">ð¡</span>
           <div>
             <p className="text-blue-200 text-sm font-semibold">How Predictions Update</p>
             <p className="text-gray-400 text-sm mt-1">
@@ -200,7 +200,7 @@ export default function FixturesPage() {
         </div>
       )}
 
-      {/* ── Fixture grid ── */}
+      {/* ââ Fixture grid ââ */}
       {(mode === 'predictions' || hasFinished) &&
         [...groupedFixtures.entries()].map(([date, fixtures]) => (
           <section key={date} className="space-y-4">
@@ -220,35 +220,35 @@ export default function FixturesPage() {
                 return (
                   <div key={fixture.id} className="relative">
 
-                    {/* ── LIVE badge ── */}
+                    {/* ââ LIVE badge ââ */}
                     {liveMatch && (
                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg shadow-red-900/60 whitespace-nowrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         LIVE {liveMatch.fixture.status.elapsed}&apos;
                         <span className="mx-1">
-                          {liveMatch.goals.home ?? 0}–{liveMatch.goals.away ?? 0}
+                          {liveMatch.goals.home ?? 0}â{liveMatch.goals.away ?? 0}
                         </span>
                       </div>
                     )}
 
-                    {/* ── FT result badge ── */}
+                    {/* ââ FT result badge ââ */}
                     {finishedMatch && mode === 'results' && (
                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 bg-green-700 text-white text-xs font-black px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
                         FT
                         <span className="mx-1">
-                          {finishedMatch.goals.home ?? 0}–{finishedMatch.goals.away ?? 0}
+                          {finishedMatch.goals.home ?? 0}â{finishedMatch.goals.away ?? 0}
                         </span>
                         {/* Correct prediction indicator */}
                         {(() => {
-                          const ph = Math.round(prediction.homeGoals);
-                          const pa = Math.round(prediction.awayGoals);
+                          const ph = prediction.predictedScore.home;
+                          const pa = prediction.predictedScore.away;
                           const ah = finishedMatch.goals.home ?? 0;
                           const aa = finishedMatch.goals.away ?? 0;
                           const predWin  = ph > pa ? 'home' : ph < pa ? 'away' : 'draw';
                           const actWin   = ah > aa ? 'home' : ah < aa ? 'away' : 'draw';
                           return predWin === actWin
-                            ? <span className="ml-1 text-green-300" title="Correct result">✓</span>
-                            : <span className="ml-1 text-red-300"   title="Wrong result">✗</span>;
+                            ? <span className="ml-1 text-green-300" title="Correct result">â</span>
+                            : <span className="ml-1 text-red-300"   title="Wrong result">â</span>;
                         })()}
                       </div>
                     )}
@@ -265,7 +265,7 @@ export default function FixturesPage() {
           </section>
         ))}
 
-      {/* ── Footer note ── */}
+      {/* ââ Footer note ââ */}
       <div className="text-center py-8 text-gray-600 text-sm border-t border-fifa-border">
         <p>Matchday 2 &amp; 3 predictions unlock automatically once all Matchday 1 results are confirmed.</p>
         <p className="mt-1">Knockout round brackets will appear after the group stage.</p>
