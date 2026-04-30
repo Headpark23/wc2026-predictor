@@ -1,3 +1,5 @@
+'use client';
+
 import { TEAMS } from '@/lib/constants';
 import { getFlagEmoji } from '@/lib/utils';
 
